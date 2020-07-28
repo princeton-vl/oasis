@@ -1,0 +1,3 @@
+JOBS_MODEL_DIR = ""
+JOBS_LOG_DIR = ""
+JOBS_DIR = ""
