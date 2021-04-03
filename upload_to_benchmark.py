@@ -52,7 +52,6 @@ def upload_files_to_server(temp_directory, args):
         output = subprocess.check_output(cmd, shell=True, stderr=subprocess.DEVNULL)
         output = output.decode('utf-8')
         assert "Error" not in output, output
-        print(output)
 
 def create_tar_chunks(source_directory, temp_directory):
     command1 = f"tar czvf - {source_directory}"
@@ -73,18 +72,18 @@ if __name__ == "__main__":
 
     # Read command line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('submission_directory', help='the directory to tar and submit')
-    parser.add_argument('--task', required=True, help='one of ' + str(VALID_BENCHMARKS))
-    parser.add_argument('--affiliation', required=True, help='Your Affiliation (will not be publicly displayed)')
-    parser.add_argument('--publication_title', default="", help='Publication Title')
-    parser.add_argument('--publication_url', default="", help='Link to Publication')
-    parser.add_argument('--authors', default="", help='Authors')
-    parser.add_argument('--submission_name', required=True, help='Submission Name (The name that will appear on the leaderboard)')
-    parser.add_argument('--email', required=True, help='Email account entered when receiving a password for OASIS')
-    parser.add_argument('--password', required=True, help='OASIS account password')
-    parser.add_argument('--public', action="store_true", help='make submission public')
-    parser.add_argument('--temp_directory', type=str, default=None, help='path to the tmp directory')
-    parser.add_argument('--skip_taring', action="store_true", default=False, help='assume the folder is already tarred into the tmp directory')
+    parser.add_argument('submission_directory', help='The directory containing .npy files to tar and submit.')
+    parser.add_argument('--task', required=True, help='one of ' + str(VALID_BENCHMARKS) + '.')
+    parser.add_argument('--affiliation', required=True, help='Your Affiliation (will not be publicly displayed).')
+    parser.add_argument('--publication_title', default="", help='Publication Title.')
+    parser.add_argument('--publication_url', default="", help='Link to Publication.')
+    parser.add_argument('--authors', default="", help='Authors.')
+    parser.add_argument('--submission_name', required=True, help='Submission Name (The name that will appear on the leaderboard).')
+    parser.add_argument('--email', required=True, help='Email account entered when receiving a password for OASIS.')
+    parser.add_argument('--password', required=True, help='OASIS account password. Requested via the OASIS login page. Valid for four hours.')
+    parser.add_argument('--public', action="store_true", help='Make the submission public.')
+    parser.add_argument('--temp_directory', type=str, default=None, help='The local path to a temporary directory. If not provided, a directory oasis_upload_tmp/ will be created instead.')
+    parser.add_argument('--skip_taring', action="store_true", default=False, help='assume the folder is already tarred into the tmp directory.')
     args = parser.parse_args()
     args.submission_directory = args.submission_directory.rstrip('/')
 
