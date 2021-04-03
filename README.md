@@ -59,6 +59,25 @@ OASIS
         - OASIS_test.csv    
 ```
 
+## Submitting to the OASIS Benchmark
+
+To submit your predictions to the OASIS benchmark, store your predictions for all test images in a directory with the following format:
+```
+oasis_predictions/
+    - *****.npy
+    - *****.npy
+    ...
+    - *****.npy
+```
+
+Then run the upload_to_benchmark.py python script to submit your results to the leaderboard. This can take upwards of an hour on slower internet connections.
+
+**Example:**
+```
+python upload_to_benchmark.py oasis_predictions/  --task normal_bench \ 
+--password 9e67a7866dtf484748fcaf07fh5724s4etc7b94c --public \
+--email firstname@princeton.edu --submission_name hourglass --affiliation Princeton
+```
 
 ## Experiments
 
