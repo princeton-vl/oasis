@@ -76,7 +76,39 @@ Then run the upload_to_benchmark.py python script to submit your results to the 
 ```
 python upload_to_benchmark.py oasis_predictions/  --task normal_bench \ 
 --password 9e67a7866dtf484748fcaf07fh5724s4etc7b94c --public \
---email firstname@princeton.edu --submission_name hourglass --affiliation Princeton
+--email firstname@princeton.edu --submission_name Hourglass --affiliation Princeton
+```
+
+**Usage:**
+```
+positional arguments:
+  submission_directory  The directory containing .npy files to tar and submit.
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --task TASK           one of ['normal_bench', 'depth_bench',
+                        'occfold_bench', 'planar_bench'].
+  --affiliation AFFILIATION
+                        Your Affiliation (will not be publicly displayed).
+  --publication_title PUBLICATION_TITLE
+                        Publication Title.
+  --publication_url PUBLICATION_URL
+                        Link to Publication.
+  --authors AUTHORS     Authors.
+  --submission_name SUBMISSION_NAME
+                        Submission Name (The name that will appear on the
+                        leaderboard).
+  --email EMAIL         Email account entered when receiving a password for
+                        OASIS.
+  --password PASSWORD   OASIS account password. Requested via the OASIS login
+                        page. Valid for four hours.
+  --public              Make the submission public.
+  --temp_directory TEMP_DIRECTORY
+                        The local path to a temporary directory. If not
+                        provided, a directory oasis_upload_tmp/ will be
+                        created instead.
+  --skip_taring         Assume the submission is already tarred into the temporary
+                        directory.
 ```
 
 ## Experiments
