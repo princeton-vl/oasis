@@ -83,7 +83,7 @@ if __name__ == "__main__":
     parser.add_argument('--password', required=True, help='OASIS account password. Requested via the OASIS login page. Valid for four hours.')
     parser.add_argument('--public', action="store_true", help='Make the submission public.')
     parser.add_argument('--temp_directory', type=str, default=None, help='The local path to a temporary directory. If not provided, a directory oasis_upload_tmp/ will be created instead.')
-    parser.add_argument('--skip_taring', action="store_true", default=False, help='assume the folder is already tarred into the tmp directory.')
+    parser.add_argument('--skip_taring', action="store_true", default=False, help='Assume the submission is already tarred into the temporary directory.')
     args = parser.parse_args()
     args.submission_directory = args.submission_directory.rstrip('/')
 
