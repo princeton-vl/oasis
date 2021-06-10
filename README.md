@@ -103,10 +103,6 @@ optional arguments:
   --password PASSWORD   OASIS account password. Requested via the OASIS login
                         page. Valid for four hours.
   --public              Make the submission public.
-  --temp_directory TEMP_DIRECTORY
-                        The local path to a temporary directory. If not
-                        provided, a directory oasis_upload_tmp/ will be
-                        created instead.
   --skip_taring         Assume the submission is already tarred into the temporary
                         directory.
 ```
