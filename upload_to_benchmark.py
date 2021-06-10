@@ -7,15 +7,16 @@ import argparse
 import random
 import subprocess
 from tqdm import tqdm
-from pathlib import Path
 
 VALID_BENCHMARKS = ["normal_bench", "depth_bench", "occfold_bench", "planar_bench"]
+
 FOLDER_NAMES = {
     "depth_bench": "depth", 
     "occfold_bench":"occfold", 
     "normal_bench": "normals", 
     "planar_bench": "planar"
 }
+
 
 CURL_COMMAND_TEMPLATE = 'curl ' \
 '-F "password=USER_PASSWORD" ' \
@@ -79,7 +80,6 @@ if __name__ == "__main__":
 
     # Read command line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument('submission_directory', help='The directory containing .npy files to tar and submit.')
     parser.add_argument('--task', required=True, help='one of ' + str(VALID_BENCHMARKS) + '.')
     parser.add_argument('--affiliation', required=True, help='Your Affiliation (will not be publicly displayed).')
     parser.add_argument('--publication_title', default="", help='Publication Title.')
@@ -89,27 +89,42 @@ if __name__ == "__main__":
     parser.add_argument('--email', required=True, help='Email account entered when receiving a password for OASIS.')
     parser.add_argument('--password', required=True, help='OASIS account password. Requested via the OASIS login page. Valid for four hours.')
     parser.add_argument('--public', action="store_true", help='Make the submission public.')
+    parser.add_argument('--temp_directory', type=str, default=None, help='The local path to a temporary directory. If not provided, a directory oasis_upload_tmp/ will be created instead.')
     parser.add_argument('--skip_taring', action="store_true", default=False, help='Assume the submission is already tarred into the temporary directory.')
     args = parser.parse_args()
-    args.submission_directory = args.submission_directory.rstrip('/')
 
     # Verify correct directory structure
-    assert os.path.exists(args.submission_directory)
-    assert os.path.isdir(args.submission_directory)
-    assert all(f.endswith('.npy') for f in glob.iglob(os.path.join(args.submission_directory, '*')))
     assert args.task in VALID_BENCHMARKS, f"--task must belong to {VALID_BENCHMARKS}"
-    assert '@' in args.email and '#AT#' not in args.email
-    assert '@' not in args.publication_url
+    submission_directory = FOLDER_NAMES[args.task]
+    instructions = f"Please store your .npy files in a directory named {submission_directory}"
+    assert os.path.exists(submission_directory), f"Directory {submission_directory}/ does not exist. {instructions}"
+    assert os.path.isdir(submission_directory), f"{submission_directory}/ is not a directory. {instructions}"
+    npy_filenames = glob.glob(os.path.join(submission_directory, '*'))
+    assert len(npy_filenames) > 0, f"Directory {submission_directory}/ is empty. {instructions}"
+    assert all(f.endswith('.npy') for f in npy_filenames), f"{submission_directory} does not exclusively contain .npy files. {instructions}"
+    assert '@' in args.email and '#AT#' not in args.email, "Invalid email"
+    assert '@' not in args.publication_url, "Invalid publication url"
 
     # Create temporary directory
-    tmp_dir = FOLDER_NAMES[args.task]
-    Path(tmp_dir).mkdir(exist_ok=True)
-    print(f"INFO: Using directory {tmp_dir}/") 
+    if args.temp_directory is None:
+        tmp_dir = 'oasis_upload_tmp'
+        if not os.path.exists(tmp_dir):
+            os.mkdir(tmp_dir)
+            print(f"INFO: No temporary directory was specified using --temp_directory. Creating a directory {tmp_dir}/")
+        elif not os.path.isdir(tmp_dir):
+            raise Exception(f"{tmp_dir} already exists but isn't a directory. Please remove/rename this file.")
+        else:
+            print(f"INFO: No temporary directory was specified using --temp_directory. Using directory {tmp_dir}/") 
+    else:
+        tmp_dir = args.temp_directory.rstrip('/')
+        if not os.path.exists(tmp_dir):
+            os.mkdir(tmp_dir)
+        print(f"INFO: Using specified temp directory '{tmp_dir}/'") 
 
 
     # Zip folder into 1GB chunks
     if not args.skip_taring:
-        create_tar_chunks(args.submission_directory, tmp_dir)
+        create_tar_chunks(submission_directory, tmp_dir)
 
     # Run CURL commands sequentially
     upload_files_to_server(tmp_dir, args)
