@@ -6,13 +6,13 @@ import cv2
 import math
 import sys
 
-# sys.path.append('../common')
+sys.path.append('../common')
 from torch.utils import data
 from torch.utils.data.dataloader import default_collate
 
 import valid
 from common.utils import save_obj, load_obj
-# from common.datasets.SNOWDataset import SNOWDataset
+from common.datasets.SNOWDataset import SNOWDataset
 from common.datasets.OASISDataset import OASISNormalDatasetVal
 from common.models.NIPSNetwork import NIPSSurfaceNetwork
 

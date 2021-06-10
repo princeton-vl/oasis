@@ -7,15 +7,8 @@ import argparse
 import random
 import subprocess
 from tqdm import tqdm
-from pathlib import Path
 
 VALID_BENCHMARKS = ["normal_bench", "depth_bench", "occfold_bench", "planar_bench"]
-FOLDER_NAMES = {
-    "depth_bench": "depth", 
-    "occfold_bench":"occfold", 
-    "normal_bench": "normals", 
-    "planar_bench": "planar"
-}
 
 CURL_COMMAND_TEMPLATE = 'curl ' \
 '-F "password=USER_PASSWORD" ' \
@@ -89,6 +82,7 @@ if __name__ == "__main__":
     parser.add_argument('--email', required=True, help='Email account entered when receiving a password for OASIS.')
     parser.add_argument('--password', required=True, help='OASIS account password. Requested via the OASIS login page. Valid for four hours.')
     parser.add_argument('--public', action="store_true", help='Make the submission public.')
+    parser.add_argument('--temp_directory', type=str, default=None, help='The local path to a temporary directory. If not provided, a directory oasis_upload_tmp/ will be created instead.')
     parser.add_argument('--skip_taring', action="store_true", default=False, help='Assume the submission is already tarred into the temporary directory.')
     args = parser.parse_args()
     args.submission_directory = args.submission_directory.rstrip('/')
@@ -102,9 +96,20 @@ if __name__ == "__main__":
     assert '@' not in args.publication_url
 
     # Create temporary directory
-    tmp_dir = FOLDER_NAMES[args.task]
-    Path(tmp_dir).mkdir(exist_ok=True)
-    print(f"INFO: Using directory {tmp_dir}/") 
+    if args.temp_directory is None:
+        tmp_dir = 'oasis_upload_tmp'
+        if not os.path.exists(tmp_dir):
+            os.mkdir(tmp_dir)
+            print(f"INFO: No temporary directory was specified using --temp_directory. Creating a directory {tmp_dir}/")
+        elif not os.path.isdir(tmp_dir):
+            raise Exception(f"{tmp_dir} already exists but isn't a directory. Please remove/rename this file.")
+        else:
+            print(f"INFO: No temporary directory was specified using --temp_directory. Using directory {tmp_dir}/") 
+    else:
+        tmp_dir = args.temp_directory.rstrip('/')
+        if not os.path.exists(tmp_dir):
+            os.mkdir(tmp_dir)
+        print(f"INFO: Using specified temp directory '{tmp_dir}/'") 
 
 
     # Zip folder into 1GB chunks
